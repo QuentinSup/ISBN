@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="format-detection" content="telephone=yes" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>ISBN</title>
+
+        <style>
+
+
+        </style>
+
+    </head>
+    <body id="template">
+        <div class="head row-fluid">
+            <div class="span11">
+                <img src="./img/06-magnify.png" /><input type="text" data-bind="valueUpdate: 'afterkeydown', value: searchText" placeHolder="Search..." />
+            </div>
+            <div class="span1">
+                <!-- ko if: loading -->
+                <img src="./img/loading.gif" />
+                <!-- /ko -->
+            </div>
+        </div>
+        <div class="app">
+        <div class="row-fluid">
+            <div class="span12">
+                <ul class="books" data-bind="if: books().length == 0">
+                    <li>No items into list yet</li>
+                </ul>
+                <ul class="books" data-bind="foreach: books">
+                    <!-- ko if: visible -->
+                    <li>
+                        <img src="" data-bind="attr: { src: image }" /><label data-bind="text: title"></label>
+                        <span data-bind="text: author"></span> 
+                        <span class="book-isbn" data-bind="text: isbn"></span>
+                        <!-- ko if: wished -->
+                        <span class="tag">Wished</span>
+                        <!-- /ko -->
+                    </li>
+                    <!-- /ko -->
+                </ul>
+                <ul class="books" data-bind="if: lookUpISBN">
+                    <li data-bind="click: function() { searchISBN(lookUpISBN()); }">Research ISBN: "<span data-bind="text: lookUpISBN"></span>"</li>
+                </ul>
+            </div>
+        </div>
+        </div>
+        <div class="nav row-fluid no-space">
+            <div class="span10 offset1">
+                <button class="blue" onclick="launchScan();">Push to launch scanner</button>
+            </div>
+            <div class="span1">
+                <button onclick="loadBooksAndRender();"><img src="img/02-redo.png" /></button>
+            </div>
+        </div>
+
+        <!-- Scrips -->
+
+        <!-- Cordova / plugins -->
+        <script type="text/javascript" src="js/cordova/cordova-2.5.0.js"></script>
+        <script type="text/javascript" src="js/cordova/barcodescanner.js"></script>
+		<script type="text/javascript" charset="utf-8" src="js/cordova/httpRequest.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+
+        <!-- jQuery -->
+        <script type="text/javascript" src="js/vendor/jquery.min.js"></script>
+
+        <!-- Knockout -->
+        <script type="text/javascript" src="js/vendor/knockout.min.js"></script>
+
+        <!-- QuoJS -->
+        <!-- http://quojs.tapquo.com/ -->
+        <script type="text/javascript" src="js/vendor/quo.js"></script>
+
+        <script type="text/javascript">
+
+            // Wait for Cordova to load
+            document.addEventListener("deviceready", onDeviceReady, false);
+
+            var launchScan = function() {
+
+                window.plugins.barcodeScanner.scan(function(result) {
+                    searchISBN(result.text);
+                }, function(error) {
+                    alert("Scanning failed: " + error);
+                });
+                
+             };
+             
+            var serverUri = 'http://192.168.0.15:80/';
+            var execute     = window.plugins.HttpRequest.execute;
+
+            var searchISBN = function(isbn) {
+        		execute(
+        			serverUri + 'aws/?isbn=' + isbn,
+        			'get',
+        			{}, 
+        			httpOptions,
+	                function(response) {
+	                    // Win
+	                    var code       = response.code;
+	                    var message    = response.message;
+	                    var body       = response.body;
+
+                        var items = $(body).find('Item');
+
+                        if(items.length > 0) {
+                            items.each(function() {
+                                var ItemAttributes  = $(this).find('ItemAttributes');
+                                var LargeImage      = $(this).find('LargeImage');
+                                var book = {
+                                    isbn    : ItemAttributes.find('ISBN').text(),
+                                    image   : LargeImage.find('URL').text(),
+                                    title   : ItemAttributes.find('Title').text(),
+                                    author  : ItemAttributes.find('Author').text(),
+                                    edition : ItemAttributes.find('Edition').text(),
+                                    awsData : undefined
+                                };
+                                execute(
+                                    serverUri + 'isbn/',
+                                    'post',
+                                    book,
+                                    httpOptions,
+                                    createdCallBack,
+                                    createdCallBack
+                                );
+                                
+                            });
+	                    
+	                    }
+	                },
+	                function(response) {
+                        alert('Research failed: ' + response);
+	                });
+                
+            };
+            
+    		var httpOptions = {
+                trustAll: true
+            };
+
+            var books = ko.observableArray([]);
+            var searchText = ko.observable('');
+            var lookUpISBN = ko.observable('');
+            var loading = ko.observable(false);
+            ko.applyBindings({ books: books, searchText: searchText, lookUpISBN: lookUpISBN, loading: loading }, $('#template')[0]);
+
+            searchText.subscribe(function(text) {
+                if(text) {
+                    text = text.toUpperCase();
+                    $.each(books(), function() {
+                         this.visible(this.title.toUpperCase().indexOf(text) > -1 || this.isbn.toUpperCase().indexOf(text) > -1);
+                    });
+                    //!isNaN(text) && 
+                    lookUpISBN(text.length >= 10?text:'');
+                } else {
+                     $.each(books(), function() {
+                         this.visible(true);
+                    });
+                    lookUpISBN('');
+                }
+            });
+
+            // Cordova is ready
+            function onDeviceReady() {
+                loadBooksAndRender();
+            }
+
+            var createdCallBack = function(res) {
+                switch(res.code) {
+                    case 201:   var doc = JSON.parse(res.body);
+                                doc.visible = ko.observable(true);
+                                ko.observable(doc.wished == 'true');
+                                books.push(doc);
+                                updateEvents();
+                                searchText('');
+                                break;
+                    case 409:   alert('This reference already exists');
+                                break;
+                    default:
+                        alert('Error: ' + res.message);
+                }
+            };
+
+            function renderBooks(booksItems) {
+                books([]);
+                $.each(booksItems, function() {
+                    this.doc.visible = ko.observable(true);
+                    this.doc.wished = ko.observable(this.doc.wished == 'true');
+                    books.push(this.doc);
+                });
+                books.sort(function(a, b) {
+                    return (a.title < b.title)?-1:1;
+                });
+                updateEvents();
+            };
+
+            function loadBooksAndRender() {
+                
+                var booksItems = localStorage.getItem('books');
+                if(booksItems) {
+                    renderBooks(JSON.parse(booksItems));
+                } else {
+                    books([]);
+                }
+                loading(true);
+                execute(
+                    serverUri + 'isbn/?isbn=*',
+                    'get',
+                    {},
+                    httpOptions,
+                    function(res) {
+                        renderBooks(JSON.parse(res.body));
+                        localStorage.setItem('books', res.body);
+                        loading(false);
+                    },
+                    function(res) {
+                        alert("Can't reach server");
+                        loading(false);
+                    }
+                );
+            }
+
+            function removeBook(book) {
+                execute(
+                    serverUri + 'isbn/?isbn=' + book._id + '&rev=' + book._rev,
+                    'delete',
+                    {},
+                    httpOptions,
+                    function(res) {
+                        if(res.code == 200) {
+                            books.remove(book);
+                        }
+                    },
+                    function(res) {
+                        alert("Can't delete. " + res.message);
+                    }
+                ); 
+            }
+
+            function moveBookToWishList(book, wished) {
+                execute(
+                    serverUri + 'isbn/?isbn=' + book._id + '&rev=' + book._rev,
+                    'put',
+                    { wished: wished },
+                    httpOptions,
+                    function(res) {
+                        if(res.code == 200) {
+                            book.wished(wished);
+                        }
+                    },
+                    function(res) {
+                        alert("Can't move to wish list. " + res.message);
+                    }
+                );   
+            }
+
+            function updateEvents() {
+                $$('.books > li').on('doubleTap', function() {                
+                    var book = ko.dataFor(this);
+                    console.log('delete', book);
+                    navigator.notification.confirm('Remove from database ?', function(buttonIndex) {
+                        if(buttonIndex == 1) {
+                            removeBook(book);
+                        }
+                        if(buttonIndex == 2) {
+                            moveBookToWishList(book, !book.wished());
+                        }
+                    }, 'Delete', 'Delete,Toogle to wish list,Cancel');
+                }); 
+            }
+
+
+        </script>
+    </body>
+</html>

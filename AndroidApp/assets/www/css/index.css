@@ -1,0 +1,149 @@
+@import url(google-skin.css);
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,500,400italic,500italic);
+
+.no-space [class*="span"] {
+    margin-left: 0;
+}
+
+.tag {
+    border-radius: 10px;
+    background-color: orange;
+    color : #fefefe !important;
+    padding: 1px 7px;
+    font-size: .8em !important;
+}
+
+.head {
+    position: absolute;
+    top :0px;
+    height: 72px;
+    left: 0px;
+    right: 0px;
+    overflow: auto;
+    vertical-align: middle;
+}
+
+.head > div {
+    position: relative;
+    line-height : 72px;
+    height : 100%;
+}
+
+.head > div > button {
+    position: absolute;
+    top :5px;
+    bottom :5px;
+    left: 5px;
+    right: 5px;
+    text-align: center; 
+}
+
+.head > div > button > img {
+    position :absolute;
+    left :50%;
+    margin-left: -12px;
+    top: 50%;
+    margin-top: -8px;
+}
+
+.head > div img {
+    left:8px; 
+    position:relative;
+}
+
+.head > div input {
+    position : absolute;
+    top : 5px;
+    right : 5px;
+    bottom : 5px;
+    left :42px;
+    border : 0px;
+    font-size: 1.3em;
+}
+
+.app {
+    position: absolute;
+    top : 72px;
+    bottom :72px;
+    left: 0px;
+    right: 0px;
+    overflow: auto;
+}
+
+.nav {
+    position: absolute;
+    height :72px;
+    bottom :0px;
+    left: 0px;
+    right: 0px;
+    background-color: #000;
+}
+
+.nav > div {
+    position: relative;
+    height:100%;
+}
+
+.nav button {
+    position: absolute;
+    top :5px;
+    bottom :5px;
+    left: 5px;
+    right: 5px;  
+}
+
+body, input, select, textarea {
+    font-size       : 13pt;
+    font-family     : 'Roboto', sans-serif;
+}
+
+body {
+    padding         : 0px;
+    margin          : 0px;
+    height          : 100%;
+    background: #fefefe;
+}
+
+.books {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+.books > li {
+    list-style: none;
+    padding: 10px;
+    border-bottom:  1px solid #dedede;
+    border-top:  1px solid #efefef;
+    vertical-align: middle;
+}
+
+.books > li:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.books > li > img {
+    min-height: 96px;
+    max-height: 96px;
+    min-width: 67px;
+    max-width: 67px;
+    float: left;
+    margin-right: 1em;
+}
+
+.books > li > label {
+    text-shadow: 1px 0px 0px #ffffff;
+    display: block;
+}
+
+.books > li > span {
+    font-size: 0.9em;
+    color: #404040;
+}
+
+.books > li > span.book-isbn {
+    font-size: 0.8em;
+    display: block;
+}
