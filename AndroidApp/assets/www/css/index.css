@@ -1,10 +1,6 @@
 @import url(google-skin.css);
 @import url(http://fonts.googleapis.com/css?family=Roboto:400,500,400italic,500italic);
 
-.no-space [class*="span"] {
-    margin-left: 0;
-}
-
 .tag {
     border-radius: 10px;
     background-color: orange;
@@ -43,22 +39,30 @@
     left :50%;
     margin-left: -12px;
     top: 50%;
-    margin-top: -8px;
+    margin-top: -12px;
 }
 
 .head > div img {
-    left:8px; 
+    left:12px; 
     position:relative;
 }
 
 .head > div input {
     position : absolute;
     top : 5px;
-    right : 5px;
+    right : 60px;
     bottom : 5px;
-    left :42px;
+    left : 42px;
     border : 0px;
     font-size: 1.3em;
+}
+
+.head > div #loading {
+    position : absolute;
+    top : 5px;
+    right : 5px;
+    bottom : 5px;
+    width  : 50px;
 }
 
 .app {
@@ -104,27 +108,27 @@ body {
     background: #fefefe;
 }
 
-.books {
+.books, .books > li {
     list-style: none;
     margin: 0px;
     padding: 0px;
 }
 
-.books > li {
-    list-style: none;
+/* list */
+.books.list > li {
     padding: 10px;
     border-bottom:  1px solid #dedede;
     border-top:  1px solid #efefef;
     vertical-align: middle;
 }
 
-.books > li:after {
+.books.list > li:after {
     content: '';
     display: block;
     clear: both;
 }
 
-.books > li > img {
+.books.list > li > img {
     min-height: 96px;
     max-height: 96px;
     min-width: 67px;
@@ -133,17 +137,127 @@ body {
     margin-right: 1em;
 }
 
-.books > li > label {
+.books.list > li > label {
     text-shadow: 1px 0px 0px #ffffff;
     display: block;
 }
 
-.books > li > span {
+.books.list > li > span {
     font-size: 0.9em;
     color: #404040;
 }
 
-.books > li > span.book-isbn {
+.books.list > li > span.book-isbn {
     font-size: 0.8em;
     display: block;
+}
+
+/* icons */
+.books.icons > li {
+    display: block;
+    float: left;
+    position:relative;
+    margin: 1px;
+}
+
+.books.icons:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.books.icons > li > img {
+    min-height: 500px;
+    max-height: 500px;
+    min-width: 375px;
+    max-width: 375px;
+    float: left;
+}
+
+.books.icons > li > .book-details {
+    padding: 10px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    color: #fefefe;
+    z-index:1;
+}
+
+.books.icons > li > .book-details:after {
+    display :block;
+    content: '';
+    position:absolute;
+    opacity:0.8;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    top:0px;
+    background-color: #000;
+    z-index:-1;
+}
+
+.books.icons > li label {
+    text-shadow: 1px 0px 0px #000;
+    display: block;
+}
+
+.books.icons > li span {
+    font-size: 0.9em;
+    color: #dedede;
+}
+
+.books.icons > li span.book-isbn {
+    font-size: 0.8em;
+    display: block;
+}
+
+
+.scroller {
+    position:absolute; 
+    z-index:1;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+    width:100%;
+    padding:0;
+}
+
+/* Page */
+
+.page {
+    display: none;
+    position: absolute;
+    left:0px;
+    top:0px;
+    right: 0px;
+    bottom:0px;
+}
+
+#main.page {
+    display: block;
+}
+
+#book-choice {
+    padding: 8px;
+    margin: 25px;
+    z-index:2;
+    border-radius: 7px; 
+}
+
+#book-choice:after {
+    position:absolute;
+    border-radius: 10px;
+    top:-10px;
+    left:-10px;
+    bottom: -10px;
+    right: -10px;
+    content: '';
+    border:10px solid #444;
+    display: block;
+    z-index:-1;
+}
+
+
+#book-choice a {
+    margin : 8px 0px;
+    padding :8px;
 }
