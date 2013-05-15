@@ -12,13 +12,14 @@ var Books = function() {
             _booksItems.push(this.doc);
         });
         _booksItems.sort(function(a, b) {
-            return (a.title < b.title)?-1:1;
+            return (a.title.replace(/"/gi, '').toUpperCase() < b.title.replace(/"/gi, '').toUpperCase())?-1:1;
         });
 	}
 
     var __createdCallBack = function(res) {
         switch(res.code) {
             case 201:   var doc = JSON.parse(res.body);
+            console.log(doc);
                         doc.visible = ko.observable(true);
                         doc.wished  = ko.observable(doc.wished == 'true');
                         _booksItems.push(doc);
@@ -93,14 +94,14 @@ var Books = function() {
     };
 
     var _moveToWishList = function(book, wished) {
-        console.log(book.wished(), wished);
+        console.log(book);
         crossp.query(
             'PUT',
             __serverUri + 'isbn/?isbn=' + book._id + '&rev=' + book._rev,
             { wished: wished },
             function(res, textStatus) {
                 if(res.code == 200) {
-                    book.wished(wished == 'true');
+                    book.wished(wished);
                 } else {
                     alert("Can't move to wish list. " + res.message);
                 }

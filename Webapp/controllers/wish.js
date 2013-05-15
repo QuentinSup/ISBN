@@ -1,20 +1,29 @@
 var http			= require('http');
 
-//https://github.com/dscape/nano
-var nano		 	= require('nano')('http://' + application.config.couchdb.host + ':' + application.config.couchdb.port);
 
 server;
 application;
 
-var db = nano.use('wish_db');
+// Load server plugin 'couchdb'
+var db = server.plugins('couchdb');
 
 var wishController = (function() {
 
 	var run = function(response, request, params) {
 
 		if(request.method == 'GET') {
+			var wishList = [];
+			db.getAll(function(err, data) {
+				for(var i = 0; i < data.rows.length; i++) {
+					var doc = data.rows[i].doc;
+					if(doc.wished == 'true') {
+						wishList.push(doc.title);
+					}
+				}
+				wishList.sort();
+				server.quickr(response, 200, wishList.join('<br />'), 'text/html');
+			}, { descending: true });
 
-			//TODO
 
 		} else if(request.method == 'PUT') {
 

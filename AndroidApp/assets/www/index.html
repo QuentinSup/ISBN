@@ -154,10 +154,11 @@
             });
 
             var searchISBN = function(isbn, fn) {
+                fn = fn || function() {};
                 Books.search(isbn, function(res, textStatus) {
                     if(res.code == 201) {
                         updateEvents();
-                        searchText('');
+                        searchText(JSON.parse(res.body).title);
                         fn();
                     }
                 });
@@ -165,13 +166,15 @@
 
             crossp.ready(function() {
                 loadBooksAndRender();
+                /*
                 new iScroll('books-list', { 
-                    useTransition: true
+                    useTransition: false
                 });
+                */
                 location.hash = 'main';
                 $(window).bind('hashchange', function(event) {
                     var hashtag = location.hash.replace( /^#/, '' );
-                    $('.page').fadeOut(function() {
+                    $('.page').hide(function() {
                         $('#' + hashtag).fadeIn();
                     });
                 });

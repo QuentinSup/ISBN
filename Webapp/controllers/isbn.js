@@ -1,12 +1,10 @@
 var http			= require('http');
 
-//https://github.com/dscape/nano
-var nano		 	= require('nano')('http://' + application.config.couchdb.host + ':' + application.config.couchdb.port);
-
 server;
 application;
 
-var db = nano.use(application.config.couchdb.dbname);
+// Load server plugin 'couchdb'
+var db = server.plugins('couchdb');
 
 var isbnController = (function() {
 
@@ -20,7 +18,7 @@ var isbnController = (function() {
 			if(pisbn) {
 
 				if(pisbn == '*') {
-			 		db.list({ revs_info: true, include_docs: true, wished: pwished }, function(err, docs) {
+			 		db.getAll(function(err, docs) {
 				        if(!err) {
 					    	server.quickr(response, 200, JSON.stringify(docs.rows), 'application/json');
 						} else {
@@ -69,14 +67,14 @@ var isbnController = (function() {
 						doc.wished = request.data.wished;
 					}
 
-					db.insert(doc, pisbn, function(err, xdoc) {
+					db.insert(pisbn, doc, function(err, xdoc) {
 						if(!err) {
-					    	doc._id = xdoc.id;
-					    	doc._rev = xdoc.rev;
-					    	server.quickr(response, 200, JSON.stringify(doc));
+					    	doc._id = xdoc._id;
+					    	doc._rev = xdoc._rev;
+					    	server.quickrJSON(response, 200, doc);
 					    	console.log('> ISBN ' + request.path.query.isbn.magenta + ' updated'.green);
 						} else {
-							server.quickr(response, 409, JSON.stringify(doc));
+							server.quickrJSON(response, 409, doc);
 							console.log('> ISBN ' + request.path.query.isbn.magenta + ' not updated'.red, err.message);
 						}
 
@@ -101,15 +99,16 @@ var isbnController = (function() {
 				awsData: request.data.awsData
 			};
 
-			db.insert(doc, doc.isbn, function(err, xdoc) {
+			db.insert(doc.isbn, doc, function(err, xdoc) {
 				if(!err) {
 			    	console.log('> ISBN ' + request.data.isbn.magenta + ' created'.green);
-			    	doc._id = xdoc.id;
-			    	doc._rev = xdoc.rev;
-			    	server.quickr(response, 201, JSON.stringify(doc));
+			    	doc._id = xdoc._id;
+			    	doc._rev = xdoc._rev;
+			    	doc.taratata = 'toto';
+			    	server.quickrJSON(response, 201, doc);
 				} else {
 					console.log('> ISBN ' + request.data.isbn.magenta + ' not created'.red, err.message);
-					server.quickr(response, 409, JSON.stringify(doc));
+					server.quickrJSON(response, 409, doc);
 				}
 
 			});

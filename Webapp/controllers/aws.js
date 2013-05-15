@@ -46,10 +46,9 @@ var awsController = (function() {
 		        var queryToSign         = 'GET\nwebservices.amazon.com\n/onca/xml\n' + awsParametersString;
 		        var signature           = crypto.createHmac('sha256', awsConfig.secretPassphrase).update(queryToSign).digest('base64');
 		        var url                 = awsRESTQueryString + '?' + awsParametersString + '&Signature=' + encodeURIComponent(signature);
-		        console.log('GET', url);
+
 				var dataContent = '';
 				http.get(url, function(resp) {
-
 					resp.on('data', function(chunk) {
 				    	dataContent += chunk;
 				  	});

@@ -97,8 +97,12 @@
 }
 
 body, input, select, textarea {
-    font-size       : 13pt;
+    font-size       : 11pt;
     font-family     : 'Roboto', sans-serif;
+}
+
+input, select, textarea {
+    font-size       : 13pt;
 }
 
 body {
@@ -129,25 +133,25 @@ body {
 }
 
 .books.list > li > img {
-    min-height: 96px;
-    max-height: 96px;
-    min-width: 67px;
-    max-width: 67px;
+    min-height: 64px;
+    max-height: 64px;
+    min-width: 48px;
+    max-width: 48px;
     float: left;
     margin-right: 1em;
 }
 
-.books.list > li > label {
+.books.list > li label {
     text-shadow: 1px 0px 0px #ffffff;
     display: block;
 }
 
-.books.list > li > span {
+.books.list > li span {
     font-size: 0.9em;
     color: #404040;
 }
 
-.books.list > li > span.book-isbn {
+.books.list > li span.book-isbn {
     font-size: 0.8em;
     display: block;
 }
@@ -240,7 +244,7 @@ body {
     padding: 8px;
     margin: 25px;
     z-index:2;
-    border-radius: 7px; 
+    border-radius: 5px; 
 }
 
 #book-choice:after {
