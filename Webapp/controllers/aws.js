@@ -71,8 +71,5 @@ var awsController = (function() {
 
 })();
 
-// Register controller
-server.controllers.register('aws', awsController);
-
 // Export controller (to direct use)
 exports = awsController;

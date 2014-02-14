@@ -1,7 +1,6 @@
 var http			= require('http');
 
 server;
-application;
 
 // Load server plugin 'couchdb'
 var db = server.plugins('couchdb');
@@ -141,9 +140,6 @@ var isbnController = (function() {
 	};
 
 })();
-
-// Register controller
-server.controllers.register('isbn', isbnController);
 
 // Export controller (to direct use)
 exports = isbnController;

@@ -2,7 +2,6 @@ var http			= require('http');
 
 
 server;
-application;
 
 // Load server plugin 'couchdb'
 var db = server.plugins('couchdb');
@@ -50,9 +49,6 @@ var wishController = (function() {
 	};
 
 })();
-
-// Register controller
-server.controllers.register('wish', wishController);
 
 // Export controller (to direct use)
 exports = wishController;
