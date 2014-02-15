@@ -43,9 +43,9 @@ var isbnController = (function() {
 
 		} else if(request.method == 'PUT') {
 
-			var pisbn = request.path.query.isbn;
-			var prev = request.path.query.rev;
-
+			var pisbn = request.data.isbn;
+			var prev = request.data.rev;
+			
 			db.get(pisbn, function(err, doc) {
 
 				if(!err) {
@@ -71,10 +71,10 @@ var isbnController = (function() {
 					    	doc._id = xdoc._id;
 					    	doc._rev = xdoc._rev;
 					    	server.quickrJSON(response, 200, doc);
-					    	console.log('> ISBN ' + request.path.query.isbn.magenta + ' updated'.green);
+					    	console.log('> ISBN ' + pisbn.magenta + ' updated'.green);
 						} else {
 							server.quickrJSON(response, 409, doc);
-							console.log('> ISBN ' + request.path.query.isbn.magenta + ' not updated'.red, err.message);
+							console.log('> ISBN ' + pisbn.magenta + ' not updated'.red, err.message);
 						}
 
 					});
@@ -103,7 +103,6 @@ var isbnController = (function() {
 			    	console.log('> ISBN ' + request.data.isbn.magenta + ' created'.green);
 			    	doc._id = xdoc._id;
 			    	doc._rev = xdoc._rev;
-			    	doc.taratata = 'toto';
 			    	server.quickrJSON(response, 201, doc);
 				} else {
 					console.log('> ISBN ' + request.data.isbn.magenta + ' not created'.red, err.message);

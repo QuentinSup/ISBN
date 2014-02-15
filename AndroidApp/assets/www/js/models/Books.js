@@ -1,6 +1,6 @@
 var Books = function() {
 
-	var __serverUri = 'http://192.168.0.13:8080/';
+	var __serverUri = 'http://192.168.0.15:8080/isbn/';
 	var _booksItems = ko.observableArray();
     
 
