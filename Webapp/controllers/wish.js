@@ -1,6 +1,5 @@
 var http			= require('http');
 
-
 server;
 
 // Load server plugin 'couchdb'
